@@ -28,3 +28,19 @@ Route::group(['middleware' => 'auth'], function () {
         ->name('payment-flow.chart');
 });
 
+Route::get('/test-db', function () {
+    try {
+        DB::connection()->getPdo();
+        $tables = DB::select('SHOW TABLES');
+        return response()->json([
+            'status' => 'Connected successfully!',
+            'database' => config('database.connections.mysql.database'),
+            'tables_count' => count($tables)
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'Connection failed',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
